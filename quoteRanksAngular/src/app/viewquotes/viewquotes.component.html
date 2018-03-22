@@ -1,0 +1,16 @@
+<a [routerLink]="['/home']">Home</a>
+<a (click)="addnewquote(currentid)">Add Quote</a>
+<table>
+    <tr>
+      <th>Quotes</th>
+      <th>Votes</th>
+      <th>Actions Available</th>
+    </tr>
+    <tr class=show *ngFor="let i of currentAuthorQuotes">
+      <td>{{i.content}}</td>
+      <td>{{i.votes}}</td>
+      <td><button (click)="votequote(i._id, 1)">Vote Up</button> <button (click)="votequote(i._id, -1)">Vote Down</button> <button (click)="delid(i._id)">Delete</button></td>
+    </tr>
+  </table>
+
+  
