@@ -10,6 +10,8 @@ export class AddquoteComponent implements OnInit {
   currentAuthorID: any;
   currentAuthorinfo: any;
   newQuote: any;
+  error: any;
+
   constructor(
     private _httpService: HttpService,
     private _route: ActivatedRoute,
@@ -33,13 +35,24 @@ export class AddquoteComponent implements OnInit {
     })
   }
 
+  //make the validation for submitting quotes
   submitQuote(){
-    console.log("pressed submit")
-    console.log(this.newQuote)
+    //console.log("pressed submit")
+    //console.log(this.newQuote)
     let newQuote = this._httpService.addquote(this.currentAuthorID, this.newQuote);
     newQuote.subscribe(data => {
       console.log(data)
-      this._router.navigate(['/viewquotes/'+this.currentAuthorID])
+      if(data['message']==="Error"){
+        console.log("theres an error", data)
+        this.error = data['error'];
+        console.log(this.error)
+      }
+      else{
+        console.log("no errors", data)
+
+        this._router.navigate(['/viewquotes/'+this.currentAuthorID])
+      }
+      
     })
   }
 }

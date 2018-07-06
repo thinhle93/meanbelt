@@ -12,6 +12,7 @@ import { HomeComponent } from './home/home.component';
 import { AddauthorComponent } from './addauthor/addauthor.component';
 import { AddquoteComponent } from './addquote/addquote.component';
 import { ViewquotesComponent } from './viewquotes/viewquotes.component';
+import { EditauthorComponent } from './editauthor/editauthor.component';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { ViewquotesComponent } from './viewquotes/viewquotes.component';
     HomeComponent,
     AddauthorComponent,
     AddquoteComponent,
-    ViewquotesComponent
+    ViewquotesComponent,
+    EditauthorComponent
   ],
   imports: [
     BrowserModule,

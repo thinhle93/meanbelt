@@ -28,4 +28,8 @@ export class HttpService {
     console.log(quoteid)
     return this._http.post('/quotes/vote/'+ authorid, {qid: quoteid, votenum: num})
   }
+
+  updateAuthor(ATID, newATname){
+    return this._http.put('/quotes/editauthor/'+ ATID, {new: newATname});
+  }
 }

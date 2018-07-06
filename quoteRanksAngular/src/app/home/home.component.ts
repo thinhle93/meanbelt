@@ -28,4 +28,7 @@ export class HomeComponent implements OnInit {
       this._router.navigate(['/viewquotes/'+id])
     
   }
+  showeditauthor(id){
+    this._router.navigate(['/editauthor/'+id])
+  }
 }

@@ -9,6 +9,7 @@
   </tr>
   <tr class=show *ngFor="let i of allAuthors">
     <td>{{i.name}}</td>
-    <td><button (click)="viewQuotes(i._id)">View Quotes</button> <button (click)="showeditauthor(i._id)">Edit</button> </td>
+    <td><button (click)="viewQuotes(i._id)">View Quotes</button> 
+      <button (click)="showeditauthor(i._id)">Edit</button> </td>
   </tr>
 </table>

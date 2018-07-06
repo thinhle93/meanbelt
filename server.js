@@ -10,19 +10,20 @@ var path = require('path');
 
 var validate = require('mongoose-validator');
 
-app.use(express.static( __dirname + '/quoteRanksAngular/dist' ));var express = require('express');
-var app = express();
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/my_first_db');
-
-var bodyParser = require('body-parser');
-app.use(bodyParser.json());
-
-var path = require('path');
-
-var validate = require('mongoose-validator');
-
 app.use(express.static( __dirname + '/quoteRanksAngular/dist' ));
+var express = require('express');
+// var app = express();
+// var mongoose = require('mongoose');
+// mongoose.connect('mongodb://localhost/my_first_db');
+
+// var bodyParser = require('body-parser');
+// app.use(bodyParser.json());
+
+// var path = require('path');
+
+// var validate = require('mongoose-validator');
+
+// app.use(express.static( __dirname + '/quoteRanksAngular/dist' ));
 
 // var nameValidator = [
 // 	validate({
@@ -34,9 +35,9 @@ app.use(express.static( __dirname + '/quoteRanksAngular/dist' ));
 
 
 var QuoteSchema = new mongoose.Schema({
-    name: {type: String, required: true, minlength: [3, "too short"]},
+    name: {type: String, required: true, minlength: [3, "Author name is too short"]},
     //validate: nameValidator},
-    quote: [{content: {type: String}, votes: {type: Number, default: 0}}]
+    quote: [{content: {type: String, minlength: [3, "the quote is too short"]}, votes: {type: Number, default: 0}}]
 },
 {timestamps: true}
 )
@@ -88,27 +89,33 @@ app.get('/quotes', function(req, res){
 
 app.post("/quotes", function(req,res){
 	
-	let tempname = req.body.name;
-	Quotes.findOne({name: tempname}, function(err, data){
-		if(data){
-            console.log("alreay in the db", data)
-            
-			res.json({message: "Errors", error: "This name already exists!"})
-		}
-		else{
-			var newauthor = new Quotes();
-            newauthor.name = req.body.name;
-            newauthor.quote = [];
-			newauthor.save(function(err){
-				if(err){
-					res.json({message: "lt3", error: err});
-				}
-				else{
-					res.json("success")
-				}
-			})
-		}
-	})
+    let tempname = req.body.name;
+    if(tempname.length < 1){
+        res.json({message: "Errors", error: "Author name cannot be empty!"})
+    }
+    else{
+        Quotes.findOne({name: tempname}, function(err, data){
+            if(data){
+                console.log("alreay in the db", data)
+                
+                res.json({message: "Errors", error: "This name already exists!"})
+            }
+            else{
+                var newauthor = new Quotes();
+                newauthor.name = req.body.name;
+                newauthor.quote = [];
+                newauthor.save(function(err){
+                    if(err){
+                        res.json({message: "lt3", error: err});
+                    }
+                    else{
+                        res.json("success")
+                    }
+                })
+            }
+        })
+    }
+	
    
 })
 
@@ -128,20 +135,27 @@ app.post('/quotes/delete/:id', function(req, res){
 
 app.post('/quotes/newquote/:id', function(req, res){
     console.log("in server and adding quote")
-    Quotes.update({_id: req.params.id}, {$push: {quote: req.body}}, function(err, data){
-        if(err){
-            res.json({message: "Error", error: err})
-        }
-        else{
-            res.json(data)
-        }
-    })
+    if(req.body.content.length < 3){
+        res.json({message: "Error", error: "Quote is too short!"})
+    }
+        
+    else{
+            Quotes.update({_id: req.params.id}, {$push: {quote: req.body}}, function(err, data){
+            if(err){
+                res.json({message: "Error", error: err})
+            }
+            else{
+                res.json(data)
+            }
+        })
+    }
+   
 })
 
 app.post('/quotes/vote/:id', function(req, res){
     console.log("++++++++++++++++", req.params.id)
     Quotes.update({'quote._id': req.body.qid}, { $inc:{'quote.$.votes': req.body.votenum}}, function(err, data){
-        if(err){
+        if(err){ 
             res.json({message: "Error", error: err})
         }
         else{
@@ -150,9 +164,33 @@ app.post('/quotes/vote/:id', function(req, res){
     })
 })
 
+
+app.put('/quotes/editauthor/:id', function(req, res){
+
+    console.log("author id:", req.params.id)
+    Quotes.find({_id: req.params.id}, function(err, data){
+        if(err){
+            res.json({message: "Error", error: err})
+        }
+        else{
+            Quotes.update({_id: req.params.id}, {$set: req.body.new}, function(err, data){
+                if(err){
+                    res.json({message: "Error", error: err})
+                }
+                else{
+                    res.json(data)
+                }
+            })
+        }
+    })
+})
+
+
 app.all("*", (req,res,next) => {
     res.sendFile(path.resolve("./quoteRanksAngular/dist/index.html"))
   })
+
+
 
 app.listen(8000, function() {
     console.log("listening on port 8000")

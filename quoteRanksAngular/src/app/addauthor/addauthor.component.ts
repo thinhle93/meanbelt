@@ -18,7 +18,7 @@ export class AddauthorComponent implements OnInit {
   ngOnInit() {
     
     this.newAuthor = {name: "", quote: []}
-    
+    //this.error = "";
   }
 
   submitnew(){

@@ -1,6 +1,6 @@
 <a [routerLink]="['/home']">Home</a>
 <br>
-<p> {{newAuthor | json}} </p>
+<p *ngIf="error">{{error}}</p>
 <form (submit)="submitnew()">
     Name: <input type="text" name="newAuthor.name" [(ngModel)]="newAuthor.name">
     <br>
